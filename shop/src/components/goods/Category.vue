@@ -85,16 +85,19 @@ export default {
         },
         // 使用自定义模板
         {
+          headerAlign: 'center',
           label: '是否有效',
           type: 'template',
           template: 'isOK'
         },
         {
+          headerAlign: 'center',
           label: '排序',
           type: 'template',
           template: 'order'
         },
         {
+          headerAlign: 'center',
           label: '操作',
           type: 'template',
           template: 'opt'

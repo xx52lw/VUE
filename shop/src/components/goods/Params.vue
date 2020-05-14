@@ -22,12 +22,28 @@
       <el-tab-pane label="动态参数" name="many">
         <el-button type="primary" size="mini" :disabled="isBtnDisabled" @click="addParamBtnClick">添加参数</el-button>
         <el-table :data="manyTableData" border stripe>
-          <el-table-column type="expand"></el-table-column>
+          <!--     展开行     -->
+          <el-table-column type="expand">
+            <template slot-scope="scop">
+              <el-tag :class="['tag_attr_vals']" v-for="(item, index) in scop.row.attr_vals" :key="index">{{item}}</el-tag>
+              <el-input
+                class="tag_add"
+                v-if="scop.row.inputVisible"
+                v-model="scop.row.inputValue"
+                ref="saveTagInput"
+                size="small"
+                @keyup.enter.native="tagHandleInputConfirm(scop.row)"
+                @blur="tagHandleInputConfirm(scop.row)"
+              >
+              </el-input>
+              <el-button v-else class="tag_add" size="small" @click="tagShowInput(scop.row)">+ New Tag</el-button>
+            </template>
+          </el-table-column>
           <el-table-column type="index" label="序号"></el-table-column>
           <el-table-column label="参数名称" prop="attr_name"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.attr_id)">编辑</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row)">编辑</el-button>
               <el-button size="mini" type="danger" icon="el-icon-delete" @click="removeParams(scope.row.attr_id)">删除</el-button>
             </template>
           </el-table-column>
@@ -36,12 +52,27 @@
       <el-tab-pane label="静态属性" name="only">
         <el-button type="primary" size="mini" :disabled="isBtnDisabled" @click="addParamBtnClick">添加参数</el-button>
         <el-table :data="onlyTableData" border stripe>
-          <el-table-column type="expand"></el-table-column>
+          <el-table-column type="expand">
+            <template slot-scope="scop">
+              <el-tag :class="['tag_attr_vals']" v-for="(item, index) in scop.row.attr_vals" :key="index">{{item}}</el-tag>
+              <el-input
+                class="tag_add"
+                v-if="scop.row.inputVisible"
+                v-model="scop.row.inputValue"
+                ref="saveTagInput"
+                size="small"
+                @keyup.enter.native="tagHandleInputConfirm(scop.row)"
+                @blur="tagHandleInputConfirm(scop.row)"
+              >
+              </el-input>
+              <el-button v-else class="tag_add" size="small" @click="tagShowInput(scop.row)">+ New Tag</el-button>
+            </template>
+          </el-table-column>
           <el-table-column type="index" label="序号"></el-table-column>
           <el-table-column label="参数名称" prop="attr_name"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.attr_id)">编辑</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row)">编辑</el-button>
               <el-button size="mini" type="danger" icon="el-icon-delete" @click="removeParams(scope.row.attr_id)">删除</el-button>
             </template>
           </el-table-column>
@@ -60,6 +91,19 @@
     <span slot="footer" class="dialog-footer">
         <el-button @click="addDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addParams">确 定</el-button>
+      </span>
+  </el-dialog>
+  <!-- 修改参数的对话框 -->
+  <el-dialog :title="'修改' + titleText" :visible.sync="editDialogVisible" width="50%" @close="editDialogClosed">
+    <!-- 添加参数的对话框 -->
+    <el-form :model="editParamForm" :rules="editParamRules" ref="editParamFormRef" label-width="100px">
+      <el-form-item :label="titleText" prop="attr_name">
+        <el-input v-model="editParamForm.attr_name"></el-input>
+      </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editParams">确 定</el-button>
       </span>
   </el-dialog>
 </div>
@@ -84,6 +128,15 @@ export default {
         attr_name: ''
       },
       addParamRules: {
+        attr_name: [
+          { required: true, message: '请输入参数名称', triangle: 'blur' }
+        ]
+      },
+      editDialogVisible: false,
+      editParamForm: {
+        attr_name: ''
+      },
+      editParamRules: {
         attr_name: [
           { required: true, message: '请输入参数名称', triangle: 'blur' }
         ]
@@ -124,7 +177,13 @@ export default {
           params: { sel: this.tabName }
         }
       )
-      console.log(res)
+      res.data.forEach(item => {
+        item.attr_vals = item.attr_vals ? item.attr_vals.split(' ') : []
+        // 控制添加标签的显示
+        item.inputVisible = false
+        // 添加标签的内容
+        item.inputValue = ''
+      })
       if (res.meta.status !== 200) {
         return this.$message.error('获取参数列表失败！')
       }
@@ -134,8 +193,35 @@ export default {
         this.onlyTableData = res.data
       }
     },
-    showEditDialog (id) {},
-    removeParams (id) {},
+    showEditDialog (row) {
+      if (this.tabName === 'many') {
+        this.titleText = '动态参数'
+      } else {
+        this.titleText = '静态属性'
+      }
+      console.info(row)
+      this.editParamForm = row
+      this.editDialogVisible = true
+    },
+    removeParams (id) {
+      this.$confirm('此操作将永久删除该参数, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        // 删除的业务逻辑
+        const { data: res } = await this.$http.delete(
+          `categories/${this.cateID}/attributes/${id}`
+        )
+        if (res.meta.status !== 200) {
+          return this.$message.error('删除参数失败！')
+        }
+        this.$message.success('删除成功!')
+        this.getParamsData()
+      }).catch(() => {
+        this.$message.info('已取消删除')
+      })
+    },
     addParamBtnClick () {
       if (this.tabName === 'many') {
         this.titleText = '动态参数'
@@ -146,13 +232,13 @@ export default {
     },
     addDialogClosed () {
       this.addDialogVisible = false
-      this.$refs.addParamFormRef.
+      this.$refs.addParamFormRef.resetFields()
     },
     addParams () {
       this.$refs.addParamFormRef.validate(async valid => {
         if (!valid) return
         const { data: res } = await this.$http.post(
-          `categories/${this.cateId}/attributes`,
+          `categories/${this.cateID}/attributes`,
           {
             attr_name: this.addParamForm.attr_name,
             attr_sel: this.tabName
@@ -164,6 +250,64 @@ export default {
         this.$message.success('添加参数成功！')
         this.addDialogVisible = false
         this.getParamsData()
+      })
+    },
+    editDialogClosed () {
+      this.editDialogVisible = false
+      this.$refs.editParamFormRef.resetFields()
+    },
+    editParams () {
+      this.$refs.editParamFormRef.validate(async valid => {
+        if (!valid) return
+        const { data: res } = await this.$http.put(
+          `categories/${this.cateID}/attributes/${this.editParamForm.attr_id}`,
+          {
+            attr_name: this.editParamForm.attr_name,
+            attr_sel: this.tabName
+          }
+        )
+        console.info(res)
+        if (res.meta.status !== 200) {
+          return this.$message.error('添加参数失败！')
+        }
+        this.$message.success('添加参数成功！')
+        this.editDialogVisible = false
+        this.getParamsData()
+      })
+    },
+    // 添加标签 失去焦点或者回车键触发
+    tagHandleInputConfirm (row) {
+      if (row.inputValue.trim().length === 0) {
+        row.inputValue = ''
+        row.inputVisible = false
+        return
+      }
+      row.attr_vals.push(row.inputValue.trim())
+      row.inputValue = ''
+      row.inputVisible = false
+      this.saveAttrVals(row)
+    },
+    async saveAttrVals (row) {
+      const { data: res } = await this.$http.put(
+        `categories/${this.cateID}/attributes/${row.attr_id}`,
+        {
+          attr_name: row.attr_name,
+          attr_sel: row.attr_sel,
+          attr_vals: row.attr_vals.join(' ')
+        }
+      )
+      console.info(res)
+      if (res.meta.status !== 200) {
+        return this.$message.error('修改参数项失败！')
+      }
+      this.$message.success('修改参数项成功！')
+    },
+    tagShowInput (row) {
+      row.inputVisible = true
+      // 让文本自动获得焦点
+      // $nextTick方法左右，就是当页面上的元素被重新渲染之后，才会被指定回调函数中的代码
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
       })
     }
   },
@@ -185,5 +329,12 @@ export default {
 }
 .el-cascader {
   width: 300px;
+}
+.tag_attr_vals {
+  margin: 10px;
+}
+.tag_add {
+  width: 120px;
+  margin: 10px;
 }
 </style>
