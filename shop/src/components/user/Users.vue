@@ -39,7 +39,7 @@
               <el-button type="primary" icon="el-icon-edit" size="mini" @click="editBtnClick(scop.row)"></el-button>
               <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteBtnClick(scop.row.id)"></el-button>
               <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
-                <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+                <el-button type="warning" icon="el-icon-setting" size="mini" @click="roleBtnClick(scop.row)"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -89,6 +89,23 @@
         <span slot="footer" class="dialog-footer">
           <el-button @click="editeDialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="editeUserRequest">确 定</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog title="分配角色" :visible.sync="roleDialogVisible" width="50%" ::before-close="roleDialogHandleClose">
+        <div>
+          <p>当前用户：{{userInfo.username}}</p>
+          <p>当前角色：{{userInfo.role_name}}</p>
+          <p>分配角色：
+            <el-select v-model="selectedRoleId" placeholder="请选择">
+              <el-option v-for="item in rolesList" :key="item.id"
+                         :label="item.roleName" :value="item.id"
+              ></el-option>
+            </el-select>
+          </p>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="roleDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="roleDialogRequest">确 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -181,7 +198,13 @@ export default {
           { required: true, message: '请输入手机号', trigger: 'blur' },
           { validator: checkMobile, trigger: 'blur' }
         ]
-      }
+      },
+      //  角色
+      roleDialogVisible: false,
+      userInfo: {},
+      rolesList: [],
+      // 已选择角色的ID
+      selectedRoleId: ''
     }
   },
   methods: {
@@ -289,6 +312,38 @@ export default {
       }).catch(() => {
         this.$message.info('已取消删除！')
       })
+    },
+    async roleBtnClick (userInfo) {
+      this.userInfo = userInfo
+      //  获取所有角色列表
+      const { data: res } = await this.$http.get('roles')
+      if (res.meta.status !== 200) {
+        return this.$message.error('获取角色列表失败！')
+      }
+      this.rolesList = res.data
+      this.roleDialogVisible = true
+    },
+    roleDialogHandleClose () {
+      this.roleDialogVisible = false
+      this.userInfo = {}
+    },
+    async roleDialogRequest () {
+      if (!this.selectedRoleId) {
+        return this.$message.error('请选择分配的角色')
+      }
+      const { data: res } = await this.$http.put(
+        `users/${this.userInfo.id}/role`,
+        {
+          rid: this.selectedRoleId
+        }
+      )
+      console.info(res)
+      if (res.meta.status !== 200) {
+        return this.$message.error('更新角色失败！')
+      }
+      this.$message.success('更新角色成功！')
+      this.getUserList()
+      this.roleDialogVisible = false
     }
   }
 }
