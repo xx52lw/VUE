@@ -1,15 +1,36 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from '../components/Login.vue'
-import Home from '../components/Home.vue'
-import Welcome from '../components/Welcome.vue'
-import Users from '../components/user/Users.vue'
-import Rights from '../components/power/Rights.vue'
-import Roles from '../components/power/Roles.vue'
-import Category from '../components/goods/Category.vue'
-import Params from '../components/goods/Params.vue'
-import GoodsList from '../components/goods/List.vue'
-import GoodsAdd from '../components/goods/add.vue'
+
+const Login = () => import(/* webpackChunkName: "login_home_welcome" */ '../components/Login.vue')
+const Home = () => import(/* webpackChunkName: "login_home_welcome" */ '../components/Home.vue')
+const Welcome = () => import(/* webpackChunkName: "login_home_welcome" */ '../components/Welcome.vue')
+
+const Users = () => import(/* webpackChunkName: "user" */ '../components/user/Users.vue')
+
+const Rights = () => import(/* webpackChunkName: "power" */ '../components/power/Rights.vue')
+const Roles = () => import(/* webpackChunkName: "power" */ '../components/power/Roles.vue')
+
+const Category = () => import(/* webpackChunkName: "goods" */ '../components/goods/Category.vue')
+const Params = () => import(/* webpackChunkName: "goods" */ '../components/goods/Params.vue')
+const GoodsList = () => import(/* webpackChunkName: "goods" */ '../components/goods/List.vue')
+const GoodsAdd = () => import(/* webpackChunkName: "goods" */ '../components/goods/add.vue')
+
+const OrderList = () => import(/* webpackChunkName: "order" */ '../components/order/Order.vue')
+
+const Report = () => import(/* webpackChunkName: "Report" */ '../components/report/Report.vue')
+
+// import Login from
+// import Home from '../components/Home.vue'
+// import Welcome from '../components/Welcome.vue'
+// import Users from '../components/user/Users.vue'
+// import Rights from '../components/power/Rights.vue'
+// import Roles from '../components/power/Roles.vue'
+// import Category from '../components/goods/Category.vue'
+// import Params from '../components/goods/Params.vue'
+// import GoodsList from '../components/goods/List.vue'
+// import GoodsAdd from '../components/goods/add.vue'
+// import OrderList from '../components/order/Order.vue'
+// import Report from '../components/report/Report.vue'
 
 Vue.use(VueRouter)
 
@@ -33,7 +54,9 @@ const routes = [
       { path: '/categories', component: Category },
       { path: '/params', component: Params },
       { path: '/goods', component: GoodsList },
-      { path: '/goods/add', component: GoodsAdd }
+      { path: '/goods/add', component: GoodsAdd },
+      { path: '/orders', component: OrderList },
+      { path: '/reports', component: Report }
     ]
   }
 ]
