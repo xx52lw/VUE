@@ -37,9 +37,11 @@
 </template>
 
 <script>
+import router from '@/router'
 export default {
   // 页面创建成功后调用
   created () {
+    console.info(router)
     this.getMenuList()
     this.activePath = window.sessionStorage.getItem('activePath')
   },
@@ -69,6 +71,7 @@ export default {
       this.isCollapse = !this.isCollapse
     },
     saveNavState (activePath) {
+      console.info(activePath)
       window.sessionStorage.setItem('activePath', activePath)
       this.activePath = activePath
     },

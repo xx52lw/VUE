@@ -53,7 +53,7 @@ const routes = [
       { path: '/roles', component: Roles },
       { path: '/categories', component: Category },
       { path: '/params', component: Params },
-      { path: '/goods', component: GoodsList },
+      { path: '/goods', component: GoodsList, meta: { menuName: '认证信息' } },
       { path: '/goods/add', component: GoodsAdd },
       { path: '/orders', component: OrderList },
       { path: '/reports', component: Report }

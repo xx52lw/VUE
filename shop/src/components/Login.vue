@@ -5,6 +5,9 @@
      <!--  头像区域   -->
      <img src="../assets/logo.png">
    </div>
+   <div>
+     <i slot="prefix" class="iconfont icon-dock-lvzhi"></i>
+   </div>
    <!--  表单区域   -->
    <el-form class="login_form"  ref="loginFormRef" :model = "loginForm" label-width="0px" :rules="loginFormRules">
      <el-form-item  prop="username">

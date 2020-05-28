@@ -1,0 +1,16 @@
+{
+  "id": "1843729",
+  "name": "李卫图库",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-dock-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "14871021",
+      "name": "绿植10",
+      "font_class": "lvzhi",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    }
+  ]
+}
