@@ -7,6 +7,8 @@
    </div>
    <div>
      <i slot="prefix" class="iconfont icon-dock-lvzhi"></i>
+     <i slot="prefix" class="iconfont icon-dock-lvzhi" v-dock="'2'"></i>
+<!--     <i slot="prefix" class="iconfont icon-dock-lvzhi" v-permission="'3'"></i>-->
    </div>
    <!--  表单区域   -->
    <el-form class="login_form"  ref="loginFormRef" :model = "loginForm" label-width="0px" :rules="loginFormRules">

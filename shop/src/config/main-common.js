@@ -16,6 +16,8 @@ import 'quill/dist/quill.core.css' // import styles
 import 'quill/dist/quill.snow.css' // for snow theme
 import 'quill/dist/quill.bubble.css' // for bubble theme
 
+import * as directives from '@/directive/index.js'
+
 // 导入 NProgress 包对应的JS和CSS
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -45,6 +47,12 @@ Vue.use(VueQuillEditor)
 // 循环注册过滤器
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
+})
+
+Object.keys(directives).forEach(key => {
+  console.info(key)
+  console.info(directives[key])
+  Vue.directive(key, directives[key])
 })
 
 new Vue({
