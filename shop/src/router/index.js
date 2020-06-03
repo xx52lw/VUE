@@ -19,6 +19,8 @@ const OrderList = () => import(/* webpackChunkName: "order" */ '../components/or
 
 const Report = () => import(/* webpackChunkName: "Report" */ '../components/report/Report.vue')
 
+const Map = () => import(/* webpackChunkName: "Report" */ '../components/report/Map.vue')
+
 // import Login from
 // import Home from '../components/Home.vue'
 // import Welcome from '../components/Welcome.vue'
@@ -42,6 +44,10 @@ const routes = [
   {
     path: '/login',
     component: Login
+  },
+  {
+    path: '/login/map',
+    component: Map
   },
   {
     path: '/home',
@@ -71,7 +77,7 @@ router.beforeEach((to, from, next) => {
   // next 是一个函数，表示放行
   //     next()  放行    next('/login')  强制跳转
 
-  if (to.path === '/login') {
+  if (to.path.indexOf('/login') >= 0) {
     return next()
   }
   // 获取token

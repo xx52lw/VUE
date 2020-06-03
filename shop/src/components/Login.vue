@@ -27,6 +27,9 @@
      <el-form-item class="btns">
        <el-button class="login" type="primary" @click="login">登录</el-button>
        <el-button class="reset" type="info" @click="resetLoginForm">重置</el-button>
+       <router-link to="/login/map" target="_blank">
+         <el-button class="reset" type="info" @click="resetLoginForm">跳转</el-button>
+       </router-link>
      </el-form-item>
    </el-form>
  </div>

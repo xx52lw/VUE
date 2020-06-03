@@ -50,8 +50,6 @@ Object.keys(filters).forEach(key => {
 })
 
 Object.keys(directives).forEach(key => {
-  console.info(key)
-  console.info(directives[key])
   Vue.directive(key, directives[key])
 })
 
