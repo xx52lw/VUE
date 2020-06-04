@@ -6,6 +6,7 @@
      <img src="../assets/logo.png">
    </div>
    <div>
+<!--     <ComponentA :son="loginForm.username" @sonToFatherEvent="getSonToFatherEvent"></ComponentA>-->
      <i slot="prefix" class="iconfont icon-dock-lvzhi"></i>
      <i slot="prefix" class="iconfont icon-dock-lvzhi" v-dock="'2'"></i>
 <!--     <i slot="prefix" class="iconfont icon-dock-lvzhi" v-permission="'3'"></i>-->
@@ -37,8 +38,12 @@
 </template>
 
 <script>
+const ComponentA = () => import('@/components/component/LoginSon.vue')
 export default {
   name: '',
+  components: {
+    ComponentA
+  },
   data () {
     // var validatePass = (rule, value, callback) => {
     //   if (value === '') {
@@ -88,6 +93,10 @@ export default {
     },
     resetLoginForm () {
       this.$refs.loginFormRef.resetFields()
+    },
+    getSonToFatherEvent(msg) {
+      console.info('getSonToFatherEvent')
+      this.loginForm.username = msg
     }
   }
 
