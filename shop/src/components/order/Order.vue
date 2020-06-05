@@ -74,7 +74,17 @@ export default {
     }
   },
   created () {
+    console.info('created')
     this.getOrderList()
+  },
+  mounted() {
+    console.info('mounted')
+  },
+  activated() {
+    console.info('activated')
+  },
+  deactivated() {
+    console.info('order --deactivated')
   },
   methods: {
     async getOrderList () {

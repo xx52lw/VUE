@@ -75,6 +75,14 @@ export default {
       }
     }
   },
+  watch: {
+    loginForm: {
+      handler(val, oldVal){
+        console.log(val);
+      },
+      deep:true //true 深度监听
+    },
+  },
   methods: {
     login () {
       this.$refs.loginFormRef.validate(async valid => {

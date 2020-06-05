@@ -13,9 +13,6 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'space-before-function-paren': 0,
-    'quotes': ['error', 'single'],
-    'indent': ['error', 2],
-    'semi': ['error', 'always']
+    'space-before-function-paren': 0
   }
 }
